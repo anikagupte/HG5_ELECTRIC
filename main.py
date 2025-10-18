@@ -1,218 +1,121 @@
+#region VEXcode Generated Robot Configuration
+from vex import *
+import urandom
+
+# Brain should be defined by default
+brain=Brain()
+
+# Robot configuration code
+left_motor = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
+right_motor = Motor(Ports.PORT12, GearSetting.RATIO_18_1, True)
+intake_motor = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False)
+conveyor_motor = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
+
+
+# wait for rotation sensor to fully initialize
+wait(30, MSEC)
+
+
+# Make random actually random
+def initializeRandomSeed():
+wait(100, MSEC)
+random = brain.battery.voltage(MV) + brain.battery.current(CurrentUnits.AMP) * 100 + brain.timer.system_high_res()
+urandom.seed(int(random))
+# Set random seed
+initializeRandomSeed()
+
+
+def play_vexcode_sound(sound_name):
+# Helper to make playing sounds from the V5 in VEXcode easier and
+# keeps the code cleaner by making it clear what is happening.
+print("VEXPlaySound:" + sound_name)
+wait(5, MSEC)
+
+# add a small delay to make sure we don't print in the middle of the REPL header
+wait(200, MSEC)
+# clear the console to make sure we don't have the REPL in the console
+print("\033[2J")
+
+#endregion VEXcode Generated Robot Configuration
+
+# ------------------------------------------
+#
+#   Project: VEXcode Project
+#   Author: HG5_ELECTR!C
+#   Created: 14/10/2025
+#   Description: VEXcode V5 Python Project
+#
+# ------------------------------------------
+
 # Library imports
-import time
 from vex import *
 
-# Part definitions
-brain = Brain()
+"""
+This script is for the VEX robotics game "Push Back"
+and includes the code for both the autonomous section
+of the game, as well as the code for the controller.
+"""
 controller = Controller()
 
-## Drive Train
-REV = False
-FWD = True
-
-# current motors: port 1 and 2
-motors = MotorGroup(
-    Motor(Ports.PORT18, GearSetting.RATIO_6_1, REV), # l. front
-    Motor(Ports.PORT19, GearSetting.RATIO_6_1, REV), # l. middle
-    Motor(Ports.PORT20, GearSetting.RATIO_6_1, REV), # l. back
-)
-right_motors = MotorGroup(
-    Motor(Ports.PORT11, GearSetting.RATIO_6_1, FWD), # r. front
-    Motor(Ports.PORT12, GearSetting.RATIO_6_1, FWD), # r. middle
-    Motor(Ports.PORT13, GearSetting.RATIO_6_1, FWD), # r. back
-)
- 
-drive_train = DriveTrain(
-    lm = left_motors,
-    rm = right_motors,
-
-    wheelTravel = 0,
-    trackWidth  = 0,
-    wheelBase   = 0,
-    units= DistanceUnits.MM,
-
-    externalGearRatio= 1.0,
-)
-
-##Subsystem Motor(s)
-second_intake_motor = Motor(Ports.PORT15)
-first_intake_motor = Motor(Ports.PORT16, REV) # CHANGED BACK TO 200RPM MOTOR ON WEDNESDAY 1-15
-
-## Pneumatics
-intake_pneumatics = DigitalOut(brain.three_wire_port.h)
-clamp_pneumatics = DigitalOut(brain.three_wire_port.a)
-arm_pneumatics = DigitalOut(brain.three_wire_port.b)
+def setup():
+# pre-autonomous setup
+controller = Controller()
+intake_motor.set_stopping(HOLD)
+conveyor_motor.set_stopping(HOLD)
+intake_motor.set_velocity(60, PERCENT)
+conveyor_motor.set_velocity(30, PERCENT)
 
 
+def controller_mode():
+# controller buttons
 
-intertial_sensor = Inertial(Ports.PORT14)
+while True:
+left_motor.set_velocity(controller.axis3.position(), PERCENT)
+right_motor.set_velocity(controller.axis2.position(), PERCENT)
+left_motor.spin(FORWARD)
+right_motor.spin(FORWARD)
+wait(5, MSEC)
 
+# move forward
+if controller.buttonL1.pressing():
+intake_motor.spin(FORWARD)
+# move backwards
+elif controller.buttonL2.pressing():
+intake_motor.spin(REVERSE)
+# stop moving
+else:
+intake_motor.stop()
 
-"""
+# move conveyor belt up (pick up or placement into high tube)
+if controller.buttonR1.pressing():
+conveyor_motor.spin(FORWARD)
+# place ball into lower tube
+elif controller.buttonR2.pressing():
+conveyor_motor.spin(REVERSE)
+else:
+# stop conveyor belt
+intake_motor.stop()
 
-## Sensors, require calibration
-
-gps_sensor = Gps(Ports.PORT1)"""
-
-
-# Logic
-in_reverse = False
-clamp = False
-arm = False
-is_intake_go = False
-slow = False
-
-
-
-"""
-def toggle_intake():
-    global intake_pneumatics
-    if intake_pneumatics.value():
-        intake_pneumatics.close()
-    else:
-        intake_pneumatics.open()"""
-
-def driver_controlled():
-    global brain, controller, in_reverse, drive_train, left_motors, right_motors, second_intake_motor, intake_pneumatics, intertial_sensor, gps_sensor, clamp, is_intake_go, arm, slow
-    controller.rumble('-');
-
-    def toggle_clamp():
-        global clamp
-        clamp = not clamp
-
-    def slow_down():
-        global slow
-        slow = not slow
-
-    def toggle_reverse():
-        global in_reverse
-        in_reverse = not in_reverse
-
-    def toggle_arm():
-        global arm
-        arm = not arm
-    
-    def intake_normal():
-        global is_intake_go
-        is_intake_go = not is_intake_go
-        if is_intake_go:
-            second_intake_motor.set_velocity(-250, RPM)
-            second_intake_motor.spin(FORWARD)
-            first_intake_motor.set_velocity(200, RPM)
-            first_intake_motor.spin(FORWARD)
-        else:
-            first_intake_motor.set_velocity(0, RPM)
-            second_intake_motor.set_velocity(0,RPM)
-
-    def intake_slow():
-        global is_intake_go
-        is_intake_go = not is_intake_go
-        if is_intake_go:
-            second_intake_motor.set_velocity(-50, RPM)
-            second_intake_motor.spin(FORWARD)
-            first_intake_motor.set_velocity(200, RPM)
-            first_intake_motor.spin(FORWARD)
-        else:
-            first_intake_motor.set_velocity(0, RPM)
-            second_intake_motor.set_velocity(0,RPM)
-
-    def intake_reverse():
-        global is_intake_go
-        is_intake_go = not is_intake_go
-        if is_intake_go:
-            second_intake_motor.set_velocity(100, RPM)
-            second_intake_motor.spin(FORWARD)
-            first_intake_motor.set_velocity(-80, RPM)
-            first_intake_motor.spin(FORWARD)
-        else:
-            first_intake_motor.set_velocity(0, RPM)
-            second_intake_motor.set_velocity(0,RPM)
-
-    def intake_first_stage():
-        global is_intake_go
-        is_intake_go = not is_intake_go
-        if is_intake_go:
-            first_intake_motor.set_velocity(200, RPM)
-            first_intake_motor.spin(FORWARD)
-        else:
-            first_intake_motor.set_velocity(0, RPM)
-            second_intake_motor.set_velocity(0,RPM)
-
-    controller.buttonX.pressed(toggle_clamp)
-    controller.buttonY.pressed(toggle_arm)
-    controller.buttonB.pressed(toggle_reverse)
-    controller.buttonA.pressed(slow_down)
-
-    controller.buttonR1.pressed(intake_normal)
-    controller.buttonR2.pressed(intake_slow)
-    controller.buttonL2.pressed(intake_reverse)
-    controller.buttonL1.pressed(intake_first_stage)
+wait(5, MSEC)
 
 
+def autonomous_mode():
+# autonomous section - picks up a ball and places in high tube
 
-    #controller.buttonB.pressed(toggle_intake)
-    # controller.buttonX.pressed(toggle_reverse)
-    while not time.sleep(.02):
-        global in_reverse, slow
-        # Motion
-        forward_motionL = controller.axis3.position()
-        forward_motionR = controller.axis2.position()
+def pick_up():
+conveyor_motor.spin_for(FORWARD, 90, DEGREES)
+intake_motor.spin_for(FORWARD, 90, DEGREES)
 
-        net_left_motion = forward_motionL
-        net_right_motion = forward_motionR
+def release_low():
+intake_motor.spin_for(REVERSE, 90, DEGREES)
 
-        if slow:
-            right_motors.set_velocity(net_left_motion, RPM)
-            left_motors.set_velocity(net_right_motion, RPM)
-        else:
-            right_motors.set_velocity(net_left_motion, PERCENT)
-            left_motors.set_velocity(net_right_motion, PERCENT)
-        
-        if in_reverse:
-            right_motors.spin(REVERSE)
-            left_motors.spin(REVERSE)
-        else:
-            left_motors.spin(FORWARD)
-            right_motors.spin(FORWARD)
+def release_high():
+conveyor_motor.spin_for(FORWARD, 90, DEGREES)
 
-        clamp_pneumatics.set(clamp)
-        arm_pneumatics.set(arm)
-        
-
-        
-
-        # Intake
-        # intake_standardized_velocity = int(controller.buttonR2.pressing()) - int(controller.buttonR1.pressing())
-        # intake_motor.spin(FORWARD, 100 * intake_standardized_velocity, PERCENT)
+while True:
+if controller.buttonA():
+controller_mode()
 
 
-def autonomous():
-    global brain, controller, drive_train, second_intake_motor, intake_pneumatics, intertial_sensor, gps_sensorm, left_motors, right_motors, clamp_pneumatics
-    intertial_sensor.calibrate()
-    intertial_sensor.set_rotation(0)
-    intertial_sensor.set_heading(0)
-
-
-    drive_train.set_drive_velocity(31, PERCENT)
-    drive_train.drive(FORWARD)
-    time.sleep(1)
-    drive_train.stop()
-    clamp_pneumatics.set(True)
-    drive_train.set_turn_velocity(31, PERCENT)
-    drive_train.turn_for(45, DEGREES)
-
-    drive_train.set_drive_velocity(100,PERCENT)
-    drive_train.drive(FORWARD)
-    time.sleep(2)
-    drive_train.stop()
-
-    clamp_pneumatics.set(False)
-    drive_train.drive(REVERSE)
-    time.sleep(1.5)
-    drive_train.stop()
-
-#competition = Competition(driver_controlled, autonomous)
-
-#autonomous() ## UNCOMMENT THIS FOR AN AUTON RUN
-
-#driver_controlled() ## UNCOMMENT THIS FOR A DRIVER CONTROLLED RUN
+setup()
+controller_mode()
