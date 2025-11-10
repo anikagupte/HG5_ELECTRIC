@@ -1,6 +1,6 @@
 #region VEXcode Generated Robot Configuration
 from vex import *
-import random
+import urandom
 
 # Brain should be defined by default
 brain=Brain()
@@ -43,10 +43,10 @@ print("\033[2J")
 
 # ------------------------------------------
 # 
-# 	Project:
-#	Author:
-#	Created:
-#	Configuration:
+# 	Project: Vexcode V5 Python Comp Project
+#	Author: HG5_ELECTR!C
+#	Created: 10/11/2025
+#	Configuration: 
 # 
 # ------------------------------------------
 
