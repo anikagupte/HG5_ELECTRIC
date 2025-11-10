@@ -43,10 +43,10 @@ print("\033[2J")
 
 # ------------------------------------------
 # 
-# 	Project: Vexcode V5 Python Comp Project
+# 	Project: VEXcode Project
 #	Author: HG5_ELECTR!C
 #	Created: 10/11/2025
-#	Configuration: 
+#	Description: VEXcode V5 Competition Code
 # 
 # ------------------------------------------
 
