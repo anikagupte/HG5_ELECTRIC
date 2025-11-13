@@ -1,1 +1,1 @@
-# VEX HG5_ELECTR!C Team
+Team HG5_ELECTR!C for VEX robotics.
