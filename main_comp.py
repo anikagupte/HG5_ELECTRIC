@@ -4,14 +4,13 @@ import urandom
 
 # Brain should be defined by default
 brain=Brain()
-controller = Controller()
 
 # Robot configuration code
-intake_motor = Motor(Ports.PORT3, GearSetting.RATIO_36_1, False)
-conveyor_motor = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
-left_motor = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
-right_motor = Motor(Ports.PORT12, GearSetting.RATIO_18_1, True)
-drivetrain = DriveTrain(left_motor, right_motor, 319.19, 295, 40, MM, 1)
+intake_motor = Motor(Ports.PORT1, GearSetting.RATIO_36_1, True)
+conveyor_motor = Motor(Ports.PORT3, GearSetting.RATIO_36_1, False)
+left_motor = Motor(Ports.PORT11, GearSetting.RATIO_36_1, False)
+right_motor = Motor(Ports.PORT12, GearSetting.RATIO_36_1, True)
+drivetrain = DriveTrain(left_motor, right_motor)
 
 
 # wait for rotation sensor to fully initialize
@@ -43,10 +42,10 @@ print("\033[2J")
 
 # ------------------------------------------
 # 
-# 	Project: VEXcode Project
-#	Author: HG5_ELECTR!C
-#	Created: 10/11/2025
-#	Description: VEXcode V5 Competition Code
+# 	Project:
+#	Author:
+#	Created:
+#	Configuration:
 # 
 # ------------------------------------------
 
@@ -62,8 +61,8 @@ def pre_autonomous():
 
     intake_motor.set_stopping(HOLD)
     conveyor_motor.set_stopping(HOLD)
-    intake_motor.set_velocity(60, PERCENT)
-    conveyor_motor.set_velocity(30, PERCENT)
+    intake_motor.set_velocity(100, PERCENT)
+    conveyor_motor.set_velocity(100, PERCENT)
     wait(1, SECONDS)
 
 def autonomous():
@@ -80,19 +79,20 @@ def autonomous():
     def release_high():
         conveyor_motor.spin_for(FORWARD, 90, DEGREES)
 
-    drivetrain.drive_for(FORWARD, 550, MM)
-    pick_up()
-    drivetrain.turn_for(LEFT, 60, DEGREES)
-    drivetrain.drive_for(FORWARD, 730, MM)
+    drivetrain.drive_for(FORWARD, 300, MM)
     drivetrain.turn_for(LEFT, 90, DEGREES)
-    drivetrain.drive_for(REVERSE, 50, MM)
-    for i in range(4):
-        release_high()
+    drivetrain.drive_for(FORWARD, 825, MM)
+    drivetrain.turn_for(LEFT, 90, DEGREES)
+    drivetrain.drive_for(REVERSE, 700, MM)
+    conveyor_motor.spin(FORWARD)
 
 def user_control():
     brain.screen.clear_screen()
+    controller=Controller()
     # place driver control in this while loop
     while True:
+        wait(20, MSEC)
+        controller=Controller()
         left_motor.set_velocity(controller.axis3.position(), PERCENT)
         right_motor.set_velocity(controller.axis2.position(), PERCENT)
         left_motor.spin(FORWARD)
@@ -118,9 +118,6 @@ def user_control():
         else:
             # stop conveyor belt
             intake_motor.stop()
-
-        while True:
-            wait(5, MSEC)
 
 # create competition instance
 comp = Competition(user_control, autonomous)
