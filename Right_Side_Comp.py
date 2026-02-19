@@ -1,12 +1,3 @@
-# ------------------------------------------
-#
-# Project: VEX Competition Code
-# Author: HG5_ELECTR!C
-# Created: 12/02/2025
-# Configuration: Right
-#
-# ------------------------------------------
-
 #region VEXcode Generated Robot Configuration
 from vex import *
 import urandom
@@ -27,8 +18,10 @@ conveyor_motor_a = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
 conveyor_motor_b = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
 conveyor = MotorGroup(conveyor_motor_a, conveyor_motor_b)
 
+
 # wait for rotation sensor to fully initialize
 wait(30, MSEC)
+
 
 # Make random actually random
 def initializeRandomSeed():
@@ -38,6 +31,7 @@ def initializeRandomSeed():
      
 # Set random seed
 initializeRandomSeed()
+
 
 def play_vexcode_sound(sound_name):
     # Helper to make playing sounds from the V5 in VEXcode easier and
@@ -51,6 +45,20 @@ wait(200, MSEC)
 print("\033[2J")
 
 #endregion VEXcode Generated Robot Configuration
+
+# ------------------------------------------
+#
+# Project: VEX Competition Code
+# Author: HG5_ELECTR!C
+# Created: 02/12/2025
+# Configuration: Right
+#
+# ------------------------------------------
+
+# Library imports
+from vex import *
+
+# Begin project code
 
 def pre_autonomous():
     # actions to do when the program starts
@@ -69,15 +77,14 @@ def autonomous():
     conveyor.set_velocity(100,PERCENT)
     conveyor.spin_for(REVERSE, 1250, DEGREES) # load 3
     drivetrain.turn_for(RIGHT, 45, DEGREES)
-    drivetrain.drive_for(REVERSE, 100, MM)
-    drivetrain.turn_for(RIGHT, 12, DEGREES)
+    drivetrain.drive_for(REVERSE, 110, MM)
+    drivetrain.turn_for(RIGHT, 10, DEGREES)
     conveyor.spin_for(FORWARD, 3240, DEGREES) # score 3 balls
 
 def user_control():
     brain.screen.clear_screen()
     controller=Controller()
     while True:
-        drivetrain.set_drive_velocity(100, PERCENT)
         left_motor_a.set_velocity(controller.axis3.position(), PERCENT)
         left_motor_a.spin(REVERSE)
         left_motor_b.set_velocity(controller.axis3.position(), PERCENT)
@@ -92,7 +99,6 @@ def user_control():
 
         # move conveyor belt up (pick up or place ball into high tube)
         conveyor.set_velocity(100, PERCENT)
-        conveyor_2.set_velocity(100, PERCENT)
         if controller.buttonR1.pressing():
             conveyor.spin(FORWARD)
         # place ball into lower tube
