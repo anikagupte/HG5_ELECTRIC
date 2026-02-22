@@ -7,17 +7,16 @@
 # ------------------------------------------
 
 """
-This is the test code for our robot - it is ussed solely during training
+This is the test code for our robot - it is used solely during training
 and does not include a competition instance.
 """
 
 # library imports
 from vex import *
 import urandom
-import math
 
 # brain should be defined by default
-brain=Brain()
+brain = Brain()
 
 # robot configuration code
 left_motor_a = Motor(Ports.PORT1, GearSetting.RATIO_36_1, False)
@@ -65,9 +64,9 @@ def user_control():
     begins project code and defines controller buttons
     """
     brain.screen.clear_screen()
-    controller=Controller()
+    controller = Controller()
+    drivetrain.set_drive_velocity(100, PERCENT)
     while True:
-        drivetrain.set_drive_velocity(100, PERCENT)
         left_motor_a.set_velocity(controller.axis3.position(), PERCENT)
         left_motor_a.spin(REVERSE)
         left_motor_b.set_velocity(controller.axis3.position(), PERCENT)
@@ -99,5 +98,10 @@ def user_control():
         elif controller.buttonL2.pressing():
             # close descorer
             descorer.set(False)
+
+"""
+while line 107 would conventionally be wrapped in if __name__ == "__main__"
+we have not done this as it appeared to be unsupported in the VEX environment
+"""
 
 user_control()
