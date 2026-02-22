@@ -9,86 +9,93 @@
 
 using namespace vex;
 
-// Brain should be defined by default
+// Brain
 brain Brain;
 
-// Robot configuration code
-motor left_motor = motor(PORT11, ratio36_1, false);
-motor right_motor = motor(PORT12, ratio36_1, true);
-motor conveyor_motor = motor(PORT3, ratio36_1, false);
-motor intake_motor = motor(PORT1, ratio36_1, true);
+// Motors
+motor left_motor_a  = motor(PORT1, ratio36_1, false);
+motor left_motor_b  = motor(PORT3, ratio36_1, false);
+motor right_motor_a = motor(PORT2, ratio36_1, true);
+motor right_motor_b = motor(PORT4, ratio36_1, true);
 
-// Controller instance
-controller Controller1 = controller(primary);
+motor_group left_drive_smart  = motor_group(left_motor_a, left_motor_b);
+motor_group right_drive_smart = motor_group(right_motor_a, right_motor_b);
 
-// Function to initialize random seed
-void initializeRandomSeed() {
-    wait(100, msec);
-    int random = Brain.Battery.voltage(voltageUnits::mV) + 
-                 Brain.Battery.current(currentUnits::amp) * 100 + 
-                 Brain.Timer.systemHighResolution();
-    srand(random);
-}
+// Drivetrain: wheel circumference=319.19mm, track width=295mm, wheel base=40mm
+smartdrive drivetrain = smartdrive(left_drive_smart, right_drive_smart, PORT19, 319.19, 295, 40, mm, 1);
+// Note: If you don't have an inertial sensor, replace PORT19 with your actual inertial sensor port,
+// or use a drivetrain without one (see comment below).
 
-// Helper function to play VEXcode sounds
-void play_vexcode_sound(const char* sound_name) {
-    printf("VEXPlaySound:%s\n", sound_name);
-    wait(5, msec);
-}
+// Conveyor
+motor conveyor_motor_a = motor(PORT5, ratio18_1, false);
+motor conveyor_motor_b = motor(PORT6, ratio18_1, false);
+motor_group conveyor   = motor_group(conveyor_motor_a, conveyor_motor_b);
 
-// User control function
-void user_control(void) {
+// Descorer (pneumatic / digital out on 3-wire port A)
+digital_out descorer = digital_out(Brain.ThreeWirePort.A);
+
+// Controller
+controller Controller = controller(primary);
+
+/*---------------------------------------------------------------------------*/
+/*                              User Control Task                            */
+/*---------------------------------------------------------------------------*/
+void user_control() {
     Brain.Screen.clearScreen();
-    
+
     while (true) {
-        // Tank drive control - left side
-        left_motor.setVelocity(Controller1.Axis3.position(), percent);
-        left_motor.spin(reverse);
-        
-        // Tank drive control - right side
-        right_motor.setVelocity(Controller1.Axis2.position(), percent);
-        right_motor.spin(reverse);
-        
+        // Tank drive: axis3 = left stick vertical, axis2 = right stick vertical
+        // Spinning REVERSE to match original Python logic
+        int leftSpeed  = Controller.Axis3.position();
+        int rightSpeed = Controller.Axis2.position();
+
+        left_motor_a.setVelocity(leftSpeed, percent);
+        left_motor_a.spin(reverse);
+        left_motor_b.setVelocity(leftSpeed, percent);
+        left_motor_b.spin(reverse);
+
+        right_motor_a.setVelocity(rightSpeed, percent);
+        right_motor_a.spin(reverse);
+        right_motor_b.setVelocity(rightSpeed, percent);
+        right_motor_b.spin(reverse);
+
         wait(5, msec);
-        
-        // Move conveyor belt up (pick up or place ball into high tube)
-        conveyor_motor.setVelocity(100, percent);
-        
-        if (Controller1.ButtonR1.pressing()) {
-            conveyor_motor.spin(forward);
+
+        // Conveyor belt control
+        conveyor.setVelocity(100, percent);
+        if (Controller.ButtonR1.pressing()) {
+            conveyor.spin(forward);
+        } else if (Controller.ButtonR2.pressing()) {
+            conveyor.spin(reverse);
+        } else {
+            conveyor.stop();
         }
-        // Place ball into lower tube
-        else if (Controller1.ButtonR2.pressing()) {
-            conveyor_motor.spin(reverse);
-        }
-        else {
-            // Stop conveyor belt
-            conveyor_motor.stop();
-        }
-        
+
         wait(20, msec);
+
+        // Descorer control
+        if (Controller.ButtonL1.pressing()) {
+            descorer.set(true);   // open
+        } else if (Controller.ButtonL2.pressing()) {
+            descorer.set(false);  // close
+        }
     }
 }
 
-// Main function
+/*---------------------------------------------------------------------------*/
+/*                                 Main                                      */
+/*---------------------------------------------------------------------------*/
 int main() {
-    // Wait for sensor initialization
-    wait(30, msec);
-    
-    // Initialize random seed
-    initializeRandomSeed();
-    
-    // Add a small delay
+    // Initialize random seed (equivalent to initializeRandomSeed in Python)
+    srand((int)(Brain.Battery.voltage(voltageUnits::mV)
+              + Brain.Battery.current(currentUnits::amp) * 100
+              + Brain.Timer.systemHighResolution()));
+
     wait(200, msec);
-    
-    // Clear the console
-    printf("\033[2J");
-    
-    // Run user control
+    Brain.Screen.clearScreen();
+
+    // Run driver control directly (no competition switch — mirrors Python's user_control() call)
     user_control();
-    
-    // Prevent main from exiting
-    while (true) {
-        wait(100, msec);
-    }
+
+    return 0;
 }
