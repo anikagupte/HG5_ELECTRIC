@@ -99,3 +99,6 @@ int main() {
 
     return 0;
 }
+
+// may need to swap smartdrive for drivetrain (lack of inertial sensor) with this code:
+// drivetrain drivetrain = drivetrain(left_drive_smart, right_drive_smart, 319.19, 295, 40, mm, 1);
