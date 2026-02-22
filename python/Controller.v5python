@@ -92,10 +92,10 @@ def user_control():
         wait(20, MSEC)
 
         # moving the descorer
-        if controller.buttonL1.pressing():
+        if controller.buttonL2.pressing():
             # open descorer
             descorer.set(True)
-        elif controller.buttonL2.pressing():
+        elif controller.buttonL1.pressing():
             # close descorer
             descorer.set(False)
 
