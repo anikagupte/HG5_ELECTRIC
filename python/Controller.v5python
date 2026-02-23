@@ -109,7 +109,7 @@ def user_control():
             match_loader.set(False)
 
 """
-while line 107 would conventionally be wrapped in if __name__ == "__main__"
+while line 116 would conventionally be wrapped in if __name__ == "__main__"
 we have not done this as it appeared to be unsupported in the VEX environment
 """
 
