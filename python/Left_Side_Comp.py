@@ -14,7 +14,6 @@ left of the field (which is important for the autonomous section).
 # library imports
 from vex import *
 import urandom
-import math
 
 # Brain should be defined by default
 brain = Brain()
