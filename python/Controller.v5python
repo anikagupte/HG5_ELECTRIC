@@ -1,5 +1,3 @@
-#region VEXcode Generated Robot Configuration
-
 # ------------------------------------------
 #
 #   Project:      Controller Code
@@ -13,14 +11,14 @@ This is the test code for our robot - it is used solely during training
 and does not include a competition instance.
 """
 
+# library imports
 from vex import *
 import urandom
-import math
 
-# Brain should be defined by default
-brain=Brain()
+# brain should be defined by default
+brain = Brain()
 
-# Robot configuration code
+# robot configuration code
 left_motor_a = Motor(Ports.PORT1, GearSetting.RATIO_36_1, False)
 left_motor_b = Motor(Ports.PORT3, GearSetting.RATIO_36_1, False)
 left_drive_smart = MotorGroup(left_motor_a, left_motor_b)
@@ -34,24 +32,26 @@ conveyor = MotorGroup(conveyor_motor_a, conveyor_motor_b)
 descorer = DigitalOut(brain.three_wire_port.a)
 match_loader = DigitalOut(brain.three_wire_port.b)
 
-
 # wait for rotation sensor to fully initialize
 wait(30, MSEC)
 
-
-# Make random actually random
 def initializeRandomSeed():
+    """
+    make random actually random
+    """
     wait(100, MSEC)
     random = brain.battery.voltage(MV) + brain.battery.current(CurrentUnits.AMP) * 100 + brain.timer.system_high_res()
     urandom.seed(int(random))
-      
-# Set random seed 
+     
+# set random seed
 initializeRandomSeed()
 
-
 def play_vexcode_sound(sound_name):
-    # Helper to make playing sounds from the V5 in VEXcode easier and
-    # keeps the code cleaner by making it clear what is happening.
+    """
+    helper to make playing sounds from the V5 in VEXcode easier and
+    keeps the code cleaner by making it clear what is happening
+    :param sound_name: string
+    """
     print("VEXPlaySound:" + sound_name)
     wait(5, MSEC)
 
@@ -59,8 +59,6 @@ def play_vexcode_sound(sound_name):
 wait(200, MSEC)
 # clear the console to make sure we don't have the REPL in the console
 print("\033[2J")
-
-#endregion VEXcode Generated Robot Configuration
 
 def user_control():
     """
@@ -102,7 +100,7 @@ def user_control():
             # close descorer
             descorer.set(False)
 
-        # moving the loader mechanism
+        # moving the loader
         if controller.buttonDown.pressing():
             # open loader
             match_loader.set(True)
