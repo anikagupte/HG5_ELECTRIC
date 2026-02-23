@@ -1,10 +1,23 @@
-#region VEXcode Generated Robot Configuration
+# ------------------------------------------
+#
+#   Project:      Competition Code
+#   Author:       HG5_ELECTR!C
+#   Description:  Left Side - HAS NOT BEEN TESTED
+#
+# ------------------------------------------
+
+"""
+This is the competition code for our robot when we start on the
+left of the field (which is important for the autonomous section).
+"""
+
+# library imports
 from vex import *
 import urandom
 import math
 
 # Brain should be defined by default
-brain=Brain()
+brain = Brain()
 
 # Robot configuration code
 left_motor_a = Motor(Ports.PORT1, GearSetting.RATIO_36_1, False)
@@ -18,24 +31,24 @@ conveyor_motor_a = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
 conveyor_motor_b = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
 conveyor = MotorGroup(conveyor_motor_a, conveyor_motor_b)
 
-
 # wait for rotation sensor to fully initialize
 wait(30, MSEC)
 
-
-# Make random actually random
+# make random actually random
 def initializeRandomSeed():
     wait(100, MSEC)
     random = brain.battery.voltage(MV) + brain.battery.current(CurrentUnits.AMP) * 100 + brain.timer.system_high_res()
     urandom.seed(int(random))
      
-# Set random seed
+# set random seed
 initializeRandomSeed()
 
-
 def play_vexcode_sound(sound_name):
-    # Helper to make playing sounds from the V5 in VEXcode easier and
-    # keeps the code cleaner by making it clear what is happening.
+    """
+    helper to make playing sounds from the V5 in VEXcode easier and
+    keeps the code cleaner by making it clear what is happening
+    :param sound_name: string
+    """
     print("VEXPlaySound:" + sound_name)
     wait(5, MSEC)
 
@@ -44,34 +57,20 @@ wait(200, MSEC)
 # clear the console to make sure we don't have the REPL in the console
 print("\033[2J")
 
-#endregion VEXcode Generated Robot Configuration
-
-# ------------------------------------------
-#
-# Project: VEX Competition Code
-# Author: HG5_ELECTR!C
-# Created: 02/12/2025
-# Configuration: Right
-#
-# ------------------------------------------
-
-# Library imports
-from vex import *
-
-# Begin project code
-
 def pre_autonomous():
-    # actions to do when the program starts
+    """
+    actions to do when the program starts
+    """
     brain.screen.clear_screen()
     brain.screen.print("Waiting for autonomous to begin...")
     wait(1, SECONDS)
 
-# Begin project code
 def autonomous():
+    """
+    starts facing the left wall, loads 3 balls and then scores all 3
+    """
     brain.screen.clear_screen()
     brain.screen.print("Autonomous code running...")
-    # auton code - start facing left wall
-    # HAS NOT BEEN TESTED
     drivetrain.drive_for(REVERSE, 125, MM)
     drivetrain.turn_for(LEFT, 80, DEGREES)
     drivetrain.drive_for(REVERSE, 690, MM)
@@ -83,8 +82,11 @@ def autonomous():
     conveyor.spin_for(REVERSE, 3240, DEGREES) # score 3 balls
 
 def user_control():
+    """
+    defines controller buttons for driver controlled secton
+    """
     brain.screen.clear_screen()
-    controller=Controller()
+    controller = Controller()
     while True:
         left_motor_a.set_velocity(controller.axis3.position(), PERCENT)
         left_motor_a.spin(REVERSE)
@@ -109,6 +111,11 @@ def user_control():
             # stop conveyor belt
             conveyor.stop()
         wait(20, MSEC)
+
+"""
+while lines 118-119 would conventionally be wrapped in if __name__ == "__main__"
+we have not done this as it appeared to be unsupported in the VEX environment
+"""
 
 # create competition instance
 comp = Competition(user_control, autonomous)
