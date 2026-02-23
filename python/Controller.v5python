@@ -42,7 +42,7 @@ def initializeRandomSeed():
     random = brain.battery.voltage(MV) + brain.battery.current(CurrentUnits.AMP) * 100 + brain.timer.system_high_res()
     urandom.seed(int(random))
      
-# Set random seed
+# set random seed
 initializeRandomSeed()
 
 def play_vexcode_sound(sound_name):
