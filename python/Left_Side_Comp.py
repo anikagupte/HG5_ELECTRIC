@@ -15,10 +15,10 @@ left of the field (which is important for the autonomous section).
 from vex import *
 import urandom
 
-# Brain should be defined by default
+# brain should be defined by default
 brain = Brain()
 
-# Robot configuration code
+# robot configuration code
 left_motor_a = Motor(Ports.PORT1, GearSetting.RATIO_36_1, False)
 left_motor_b = Motor(Ports.PORT3, GearSetting.RATIO_36_1, False)
 left_drive_smart = MotorGroup(left_motor_a, left_motor_b)
@@ -33,8 +33,10 @@ conveyor = MotorGroup(conveyor_motor_a, conveyor_motor_b)
 # wait for rotation sensor to fully initialize
 wait(30, MSEC)
 
-# make random actually random
 def initializeRandomSeed():
+    """
+    make random actually random
+    """
     wait(100, MSEC)
     random = brain.battery.voltage(MV) + brain.battery.current(CurrentUnits.AMP) * 100 + brain.timer.system_high_res()
     urandom.seed(int(random))
@@ -112,7 +114,7 @@ def user_control():
         wait(20, MSEC)
 
 """
-while lines 118-119 would conventionally be wrapped in if __name__ == "__main__"
+while lines 122-123 would conventionally be wrapped in if __name__ == "__main__"
 we have not done this as it appeared to be unsupported in the VEX environment
 """
 
