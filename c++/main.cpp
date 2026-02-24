@@ -77,16 +77,16 @@ void user_control() {
         wait(20, msec);
 
         // Descorer control
-        if (Controller.ButtonL1.pressing()) {
-            descorer.set(false);   // open
-        } else if (Controller.ButtonL2.pressing()) {
-            descorer.set(true);  // close
+        if (Controller.ButtonL2.pressing()) {
+            descorer.set(true);   // close
+        } else if (Controller.ButtonL1.pressing()) {
+            descorer.set(false);  // open
         }
 
         // Match loader control
-        if (Controller.ButtonL1.pressing()) {
+        if (Controller.ButtonDown.pressing()) {
             match_loader.set(true);   // open
-        } else if (Controller.ButtonL2.pressing()) {
+        } else if (Controller.ButtonUp.pressing()) {
             match_loader.set(false);  // close
         }
     }
