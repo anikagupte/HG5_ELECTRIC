@@ -34,6 +34,9 @@ motor_group conveyor   = motor_group(conveyor_motor_a, conveyor_motor_b);
 // Descorer (pneumatic / digital out on 3-wire port A)
 digital_out descorer = digital_out(Brain.ThreeWirePort.A);
 
+// Match loader
+digital_out match_loader = digital_out(Brain.ThreeWirePort.B);
+
 // Controller
 controller Controller = controller(primary);
 
@@ -75,9 +78,16 @@ void user_control() {
 
         // Descorer control
         if (Controller.ButtonL1.pressing()) {
-            descorer.set(true);   // open
+            descorer.set(false);   // open
         } else if (Controller.ButtonL2.pressing()) {
-            descorer.set(false);  // close
+            descorer.set(true);  // close
+        }
+
+        // Match loader control
+        if (Controller.ButtonL1.pressing()) {
+            match_loader.set(true);   // open
+        } else if (Controller.ButtonL2.pressing()) {
+            match_loader.set(false);  // close
         }
     }
 }
