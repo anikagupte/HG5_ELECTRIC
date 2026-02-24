@@ -85,16 +85,16 @@ void user_control() {
 
         // Descorer control
         if (Controller.ButtonL2.pressing()) {
-            descorer.set(true);              // open descorer
+            descorer.set(true);   // close
         } else if (Controller.ButtonL1.pressing()) {
-            descorer.set(false);             // close descorer
+            descorer.set(false);  // open
         }
 
         // Match loader control
         if (Controller.ButtonDown.pressing()) {
-            match_loader.set(true);          // open loader
+            match_loader.set(true);   // open
         } else if (Controller.ButtonUp.pressing()) {
-            match_loader.set(false);         // close loader
+            match_loader.set(false);  // close
         }
     }
 }
