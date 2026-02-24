@@ -1,12 +1,17 @@
 # configure pneumatics
-pneumatics = DigitalOut(brain.three_wire_port.a)
+descorer = DigitalOut(brain.three_wire_port.a)
+match_loader = DigitalOut(brain.three_wire_port.b)
 
-# set cylinder to down
-digital_out_a.set(False)
+if controller.buttonL2.pressing():
+    # cylinder up for descorer
+    descorer.set(True)
+elif controller.buttonL1.pressing():
+    # cylinder down for descorer
+    descorer.set(False)
 
-if controller.buttonL1.pressing():
-    # cylinder up
-    digital_out_a.set(True)
-elif controller.buttonL2.pressing():
-    # cylinder down
-    digital_out_a.set(False)
+if controller.buttonDown.pressing():
+    # cylinder up for loader
+    match_loader.set(True)
+elif controller.buttonUp.pressing():
+    # cylinder down for loader
+    match_loader.set(False)

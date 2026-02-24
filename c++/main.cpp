@@ -1,18 +1,25 @@
-// ------------------------------------------
-//
-// Project: VEX Controller Code
-// Configuration: Controller
-//
-// ------------------------------------------
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/*    Module:       main.cpp                                                  */
+/*    Project:      Controller Code                                           */
+/*    Author:       HG5_ELECTR!C                                              */
+/*    Description:  VEXcode V5 C++ Test Code                                 */
+/*                                                                            */
+/*    This is the test code for our robot - it is used solely during         */
+/*    training and does not include a competition instance.                   */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
 
 #include "vex.h"
 
 using namespace vex;
 
-// Brain
+/*---------------------------------------------------------------------------*/
+/*                          Robot Configuration                              */
+/*---------------------------------------------------------------------------*/
+
 brain Brain;
 
-// Motors
 motor left_motor_a  = motor(PORT1, ratio36_1, false);
 motor left_motor_b  = motor(PORT3, ratio36_1, false);
 motor right_motor_a = motor(PORT2, ratio36_1, true);
@@ -21,33 +28,33 @@ motor right_motor_b = motor(PORT4, ratio36_1, true);
 motor_group left_drive_smart  = motor_group(left_motor_a, left_motor_b);
 motor_group right_drive_smart = motor_group(right_motor_a, right_motor_b);
 
-// Drivetrain: wheel circumference=319.19mm, track width=295mm, wheel base=40mm
-smartdrive drivetrain = smartdrive(left_drive_smart, right_drive_smart, PORT19, 319.19, 295, 40, mm, 1);
-// Note: If you don't have an inertial sensor, replace PORT19 with your actual inertial sensor port,
-// or use a drivetrain without one (see comment below).
+// Drivetrain: wheel circumference=319.19mm, track=295mm, wheelbase=40mm
+// NOTE: If you have an inertial sensor, replace PORT20 with its port number.
+//       If not, change 'smartdrive' to 'drivetrain' and remove the PORT20 arg.
+smartdrive Drivetrain = smartdrive(left_drive_smart, right_drive_smart, PORT20, 319.19, 295, 40, mm, 1);
 
-// Conveyor
 motor conveyor_motor_a = motor(PORT5, ratio18_1, false);
 motor conveyor_motor_b = motor(PORT6, ratio18_1, false);
 motor_group conveyor   = motor_group(conveyor_motor_a, conveyor_motor_b);
 
-// Descorer (pneumatic / digital out on 3-wire port A)
-digital_out descorer = digital_out(Brain.ThreeWirePort.A);
-
-// Match loader
+// Descorer on 3-wire port A, match loader on 3-wire port B
+digital_out descorer     = digital_out(Brain.ThreeWirePort.A);
 digital_out match_loader = digital_out(Brain.ThreeWirePort.B);
 
-// Controller
 controller Controller = controller(primary);
 
 /*---------------------------------------------------------------------------*/
-/*                              User Control Task                            */
+/*                             User Control                                  */
+/*                                                                           */
+/*    Defines controller buttons and begins project code.                    */
 /*---------------------------------------------------------------------------*/
 void user_control() {
     Brain.Screen.clearScreen();
 
+    Drivetrain.setDriveVelocity(100, percent);
+
     while (true) {
-        // Tank drive: axis3 = left stick vertical, axis2 = right stick vertical
+        // Tank drive - Axis3 = left stick vertical, Axis2 = right stick vertical
         // Spinning REVERSE to match original Python logic
         int leftSpeed  = Controller.Axis3.position();
         int rightSpeed = Controller.Axis2.position();
@@ -67,9 +74,9 @@ void user_control() {
         // Conveyor belt control
         conveyor.setVelocity(100, percent);
         if (Controller.ButtonR1.pressing()) {
-            conveyor.spin(forward);
+            conveyor.spin(forward);          // pick up / place into high tube
         } else if (Controller.ButtonR2.pressing()) {
-            conveyor.spin(reverse);
+            conveyor.spin(reverse);          // place into lower tube
         } else {
             conveyor.stop();
         }
@@ -93,10 +100,10 @@ void user_control() {
 }
 
 /*---------------------------------------------------------------------------*/
-/*                                 Main                                      */
+/*                                  Main                                     */
 /*---------------------------------------------------------------------------*/
 int main() {
-    // Initialize random seed (equivalent to initializeRandomSeed in Python)
+    // Initialize random seed
     srand((int)(Brain.Battery.voltage(voltageUnits::mV)
               + Brain.Battery.current(currentUnits::amp) * 100
               + Brain.Timer.systemHighResolution()));
@@ -104,7 +111,7 @@ int main() {
     wait(200, msec);
     Brain.Screen.clearScreen();
 
-    // Run driver control directly (no competition switch — mirrors Python's user_control() call)
+    // Run driver control directly (no competition instance — training only)
     user_control();
 
     return 0;
