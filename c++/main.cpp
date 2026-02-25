@@ -3,9 +3,9 @@
 /*    Module:       main.cpp                                                  */
 /*    Project:      Controller Code                                           */
 /*    Author:       HG5_ELECTR!C                                              */
-/*    Description:  VEXcode V5 C++ Test Code                                 */
+/*    Description:  VEXcode V5 C++ Test Code                                  */
 /*                                                                            */
-/*    This is the test code for our robot - it is used solely during         */
+/*    This is the test code for our robot - it is used solely during          */
 /*    training and does not include a competition instance.                   */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
