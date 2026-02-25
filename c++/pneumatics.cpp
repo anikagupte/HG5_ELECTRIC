@@ -1,14 +1,23 @@
 // Configure pneumatics
-digital_out pneumatics = digital_out(Brain.ThreeWirePort.A);
+digital_out descorer = digital_out(Brain.ThreeWirePort.A);
+digital_out match_loader = digital_out(Brain.ThreeWirePort.B);
 
-// Set cylinder to down
-pneumatics.set(false);
-
+// Moving the descorer
 if (Controller1.ButtonL2.pressing()) {
-    // Cylinder up
-    pneumatics.set(true);
+    // Descorer up
+    descorer.set(true);
 }
 else if (Controller1.ButtonL1.pressing()) {
-    // Cylinder down
-    pneumatics.set(false);
+    // Descorer down
+    descorer.set(false);
+}
+
+// Moving the loader
+if (Controller1.ButtonDown.pressing()) {
+    // Loader down
+    match_loader.set(true);
+}
+else if (Controller1.ButtonUp.pressing()) {
+    // Loader up
+    match_loader.set(false);
 }
