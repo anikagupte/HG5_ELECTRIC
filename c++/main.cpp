@@ -29,8 +29,6 @@ motor_group left_drive_smart  = motor_group(left_motor_a, left_motor_b);
 motor_group right_drive_smart = motor_group(right_motor_a, right_motor_b);
 
 // Drivetrain: wheel circumference=319.19mm, track=295mm, wheelbase=40mm
-// NOTE: If you have an inertial sensor, replace PORT20 with its port number.
-//       If not, change 'smartdrive' to 'drivetrain' and remove the PORT20 arg.
 smartdrive Drivetrain = smartdrive(left_drive_smart, right_drive_smart, PORT20, 319.19, 295, 40, mm, 1);
 
 motor conveyor_motor_a = motor(PORT5, ratio18_1, false);
