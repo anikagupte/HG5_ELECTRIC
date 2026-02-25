@@ -29,7 +29,7 @@ motor_group left_drive_smart  = motor_group(left_motor_a, left_motor_b);
 motor_group right_drive_smart = motor_group(right_motor_a, right_motor_b);
 
 // Drivetrain: wheel circumference=319.19mm, track=295mm, wheelbase=40mm
-smartdrive Drivetrain = smartdrive(left_drive_smart, right_drive_smart, PORT20, 319.19, 295, 40, mm, 1);
+drivetrain Drivetrain = drivetrain(left_drive_smart, right_drive_smart, 319.19, 295, 40, mm, 1);
 
 motor conveyor_motor_a = motor(PORT5, ratio18_1, false);
 motor conveyor_motor_b = motor(PORT6, ratio18_1, false);
