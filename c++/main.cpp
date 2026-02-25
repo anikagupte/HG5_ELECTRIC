@@ -44,7 +44,7 @@ controller Controller = controller(primary);
 /*---------------------------------------------------------------------------*/
 /*                             User Control                                  */
 /*                                                                           */
-/*    Defines controller buttons and begins project code.                    */
+/*           Defines controller buttons and begins project code.             */
 /*---------------------------------------------------------------------------*/
 void user_control() {
     Brain.Screen.clearScreen();
@@ -53,7 +53,6 @@ void user_control() {
 
     while (true) {
         // Tank drive - Axis3 = left stick vertical, Axis2 = right stick vertical
-        // Spinning REVERSE to match original Python logic
         int leftSpeed  = Controller.Axis3.position();
         int rightSpeed = Controller.Axis2.position();
 
@@ -114,6 +113,3 @@ int main() {
 
     return 0;
 }
-
-// may need to swap smartdrive for drivetrain (lack of inertial sensor) with this code:
-// drivetrain drivetrain = drivetrain(left_drive_smart, right_drive_smart, 319.19, 295, 40, mm, 1);
