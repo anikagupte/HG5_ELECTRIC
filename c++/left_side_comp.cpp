@@ -4,7 +4,7 @@
 /*    Project:      VEX Competition Code                                      */
 /*    Author:       HG5_ELECTR!C                                              */
 /*    Created:      02/12/2025                                                */
-/*    Configuration: Left (HAS NOT BEEN TESTED)                              */
+/*    Configuration: Left (HAS NOT BEEN TESTED)                               */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -27,8 +27,6 @@ motor_group left_drive_smart  = motor_group(left_motor_a, left_motor_b);
 motor_group right_drive_smart = motor_group(right_motor_a, right_motor_b);
 
 // Drivetrain: wheel circumference=319.19mm, track=295mm, wheelbase=40mm
-// NOTE: If you have an inertial sensor, replace PORT20 with its port number.
-//       If not, change 'smartdrive' to 'drivetrain' and remove the PORT20 arg.
 smartdrive Drivetrain = smartdrive(left_drive_smart, right_drive_smart, PORT20, 319.19, 295, 40, mm, 1);
 
 motor conveyor_motor_a = motor(PORT5, ratio18_1, false);
@@ -104,6 +102,20 @@ void user_control() {
             conveyor.spin(reverse);          // place into lower tube
         } else {
             conveyor.stop();
+        }
+
+        // Descorer control
+        if (Controller.ButtonL2.pressing()) {
+            descorer.set(true);   // close
+        } else if (Controller.ButtonL1.pressing()) {
+            descorer.set(false);  // open
+        }
+
+        // Match loader control
+        if (Controller.ButtonDown.pressing()) {
+            match_loader.set(true);   // open
+        } else if (Controller.ButtonUp.pressing()) {
+            match_loader.set(false);  // close
         }
 
         wait(20, msec);
