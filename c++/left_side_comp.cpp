@@ -117,6 +117,13 @@ void user_control() {
             match_loader.set(false);  // close
         }
 
+        // Quick turns
+        if (Controller.ButtonRight.pressing()) {
+            Drivetrain.turnFor(right, 90, degrees);   // turn 90 degrees right
+        } else if (Controller.ButtonLeft.pressing()) {
+            Drivetrain.turnFor(left, 90, degrees);  // turn 90 degrees left
+        }
+
         wait(20, msec);
     }
 }
