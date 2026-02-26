@@ -81,23 +81,23 @@ void user_control() {
         wait(20, msec);
 
         // Descorer control
-        if (Controller.ButtonL2.pressing()) {
+        if (Controller.ButtonL1.pressing()) {
             descorer.set(true);   // close
-        } else if (Controller.ButtonL1.pressing()) {
+        } else if (Controller.ButtonL2.pressing()) {
             descorer.set(false);  // open
         }
 
         // Match loader control
-        if (Controller.ButtonDown.pressing()) {
+        if (Controller.ButtonUp.pressing()) {
             match_loader.set(true);   // open
-        } else if (Controller.ButtonUp.pressing()) {
+        } else if (Controller.ButtonDown.pressing()) {
             match_loader.set(false);  // close
         }
 
         // Quick turns
-        if (Controller.ButtonRight.pressing()) {
+        if (Controller.ButtonLeft.pressing()) {
             Drivetrain.turnFor(right, 90, degrees);   // turn 90 degrees right
-        } else if (Controller.ButtonLeft.pressing()) {
+        } else if (Controller.ButtonRight.pressing()) {
             Drivetrain.turnFor(left, 90, degrees);  // turn 90 degrees left
         }
     }
